@@ -13,7 +13,7 @@ public class Board : MonoBehaviour
     void Start()
     {
         allCandies = new GameObject[width, height];
-        offset = new Vector2(-(width - 1) * tileSize / 2, -(height - 1) * tileSize / 2);
+        offset = new Vector2(-(width - 1) * tileSize / 2, -(height - 1) * tileSize / 2); // giải thích 
         SetupBoard();
     }
 
@@ -25,14 +25,14 @@ public class Board : MonoBehaviour
             {
                 Vector2 pos = new Vector2(x * tileSize, y * tileSize) + offset;
                 GameObject candy = Instantiate(candyPrefabs[Random.Range(0, candyPrefabs.Length)], pos, Quaternion.identity);
-                candy.transform.parent = transform;
+                candy.transform.parent = transform; // giải thích 
                 candy.name = $"Candy ({x},{y})";
-                allCandies[x, y] = candy;
+                allCandies[x, y] = candy; 
             }
         }
     }
 
-    public void CheckMatches()
+    public void CheckMatches3()
     {
         bool hasMatches = false;
 
@@ -71,6 +71,63 @@ public class Board : MonoBehaviour
                     allCandies[x, y] = null;
                     allCandies[x, y + 1] = null;
                     allCandies[x, y + 2] = null;
+                    hasMatches = true;
+                }
+            }
+        }
+
+        if (hasMatches)
+        {
+            StartCoroutine(FillBoard());
+        }
+    }
+    public void CheckMatches4()
+    {
+        bool hasMatches = false;
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                // Kiểm tra ngang
+                if (x < width - 3 &&
+                    allCandies[x, y] != null && // Thêm kiểm tra null
+                    allCandies[x + 1, y] != null && // Thêm kiểm tra null
+                    allCandies[x + 2, y] != null && // Thêm kiểm tra null
+                    allCandies[x + 3, y] != null && // Thêm kiểm tra null
+                    allCandies[x, y].tag == allCandies[x + 1, y].tag &&
+                    allCandies[x, y].tag == allCandies[x + 2, y].tag &&
+                    allCandies[x, y].tag == allCandies[x + 3, y].tag)
+                {
+                    Destroy(allCandies[x, y]);
+                    Destroy(allCandies[x + 1, y]);
+                    Destroy(allCandies[x + 2, y]);
+                    Destroy(allCandies[x + 3, y]);
+                    allCandies[x, y] = null;
+                    allCandies[x + 1, y] = null;
+                    allCandies[x + 2, y] = null;
+                    allCandies[x + 3, y] = null;
+                    hasMatches = true;
+                }
+
+                // Kiểm tra dọc
+                if (y < height - 3 &&
+                    allCandies[x, y] != null && // Thêm kiểm tra null
+                    allCandies[x, y + 1] != null && // Thêm kiểm tra null
+                    allCandies[x, y + 2] != null && // Thêm kiểm tra null
+                    allCandies[x, y + 3] != null && // Thêm kiểm tra null
+                    allCandies[x, y].tag == allCandies[x, y + 1].tag &&
+                    allCandies[x, y].tag == allCandies[x, y + 2].tag &&
+                    allCandies[x, y].tag == allCandies[x, y + 3].tag)
+                {
+                    Destroy(allCandies[x, y]);
+                    Destroy(allCandies[x, y + 1]);
+                    Destroy(allCandies[x, y + 2]);
+                    Destroy(allCandies[x, y + 3]);
+                    allCandies[x, y] = null;
+                    allCandies[x, y + 1] = null;
+                    allCandies[x, y + 2] = null;
+                    allCandies[x, y + 3] = null;
                     hasMatches = true;
                 }
             }
@@ -128,7 +185,8 @@ public class Board : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.5f);
-        CheckMatches();
+        CheckMatches3();
+        CheckMatches4();
     }
 
     IEnumerator MoveCandy(GameObject candy, Vector2 targetPos)

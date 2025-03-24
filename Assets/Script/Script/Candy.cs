@@ -106,6 +106,7 @@ public class Candy : MonoBehaviour
         targetCandy.transform.position = startPos;
 
         // Kiểm tra match sau khi hoán đổi
-        board.CheckMatches();
+        board.CheckMatches3();
+        board.CheckMatches4();
     }
 }
